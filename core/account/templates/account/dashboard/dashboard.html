@@ -1,0 +1,65 @@
+{%  extends "base.html" %}
+
+{% load static %}
+
+
+{% block content %}
+
+    <br>
+    <div class="container bg-white shadow-md p-3">
+        <h4>Welcome, {{ user.username }}!</h4>
+
+        <hr>
+
+        <h6>Personal information</h6>
+        
+        <br />
+
+        <!--Home page-->
+        <a href="{% url 'shop:products' %}">
+            <button class="btn btn-success">
+                Go to Home Page
+            </button>
+        </a>
+        
+        <!--Profile management-->
+        <a href="{% url 'account:profile-management' %}">
+            <button class="btn btn-primary">
+                Change-Profile
+            </button>
+        </a>
+
+        <!--Change Shipping address-->
+        <a href="{% url 'payment:shipping' %}">
+            <button class="btn btn-info">
+                Change-Shipping address
+            </button>
+        </a>
+
+        <!--TODO: Email verification button if user has not been verified-->
+
+        <!--Reset Password-->
+        <a href="{% url 'account:password-reset' %}">
+            <button class="btn btn-warning">
+                Reset-Password
+            </button>
+        </a>
+
+        <!--Logout-->
+        <a href="{% url 'account:logout' %}">
+            <button class="btn btn-secondary">
+                Logout
+            </button>
+        </a>
+
+        <!--Delete account-->
+        <a href="{% url 'account:delete-user' %}">
+            <button class="btn btn-danger">
+                Delete Account
+            </button>
+        </a>
+
+        <!--TODO: If user is stuff or superuser then show button to redirect to admin panel page-->
+
+    </div>
+{% endblock %}
