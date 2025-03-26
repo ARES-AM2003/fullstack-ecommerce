@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <main class="pt-5">
+        <div class="row g-3">
+            <div class="col-md-5 col-lg-5 order-md-first bg-light">
+                <!-- Product image -->
+                <img class="img-fluid mx-auto d-block" alt="Responsive image" src="{{product.full_image_url}}">
+            </div>
+            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+                <h1 class="mb-0 h4"> {{product.title}}</h1>
+                <strong>{{product.brand}}</strong>
+                <hr>
+                <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item"><a href="{% url 'shop:products' %}">Continue Shopping</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">{{product.title}}</li>
+                    </ol>
+                </nav>
+                <br>
+                <p> {{product.description}} </p>
+                <div class="border">
+                    <div class="col border-bottom">
+                        <div class="row p-3">
+                            <div class="col-6"> Price </div>
+                            {% if product.discount %}
+                            <div class="col-6 text-end"><span class="text-decoration-line-through fw-bold text-danger">$ {{product.price}} <span class="badge rounded-pill bg-info">discount</span></span> <span class="h4 fw-bold">$ {{product.get_discounted_price}}</span></div>
+                            {% else%}
+                            <div class="col-6 text-end"><span class="h4 fw-bold">$ {{product.price}}</span></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row p-3">
+                            <div class="col-6">
+                                <label for="select">Quantity</label>
+
+                                &nbsp;
+
+                                <select id="select">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
+                            <div class="col-6 text-end">
+                                <button type="button" id="add-button" value="{{product.id}}"
+                                    class="btn btn-secondary btn-sm">
+                                    Add to cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <br>
+
+    <!-- Review comment -->
+    {% include 'recommend/recommendation.html' %}
+
+</div>
+
+<script>
+    $(document).on('click', '#add-button', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart:add-to-cart" %}',
+            data: {
+                product_id: $('#add-button').val(),
+                product_qty: $('#select option:selected').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(response){
+                document.getElementById('lblCartCount').text = response.qty
+                const add_button = document.getElementById('add-button')
+                add_button.disabled = true
+                add_button.innerText = "Added to cart"
+                add_button.className = "btn btn-success btn-sm"
+
+                // TODO: when user add product to cart using this js script, make button clickable with href to cart link
+                 // Go to cart text when clicked (add product) in button
+                // FIXME: when success added to cart lblCartCount is not updated automaticaly untill page reload
+                //location.reload()
+            },
+            error: function(error){
+                console.log(error)
+            }
+        })
+    });
+</script>
+{% endblock %}
